@@ -1,26 +1,32 @@
-import moment from 'moment'
+import moment from 'moment';
 
 const datapoint = {
-    getKittyInfo(result) {
+    getKittyInfo(id, apiJSON, contractResult) {
         const {
             genes,
             generation,
             birthTime
-        } = result
-        return ([
-            {
-                title: 'Genes',
-                description: genes
-            },
-            {
-                title: 'Generation',
-                description: generation
-            },
-            {
-                title: 'BirthTime',
-                description: moment(parseInt(birthTime, 10)).format('MMMM Do YYYY')
+        } = contractResult
+        return {
+            id,
+            meta: [
+                {
+                    title: 'Genes',
+                    description: genes
+                },
+                {
+                    title: 'Generation',
+                    description: generation
+                },
+                {
+                    title: 'BirthTime',
+                    description: moment(parseInt(birthTime, 10)).format('MMMM Do YYYY')
+                }
+            ],
+            media: {
+                imageURL: apiJSON.image_url
             }
-        ])
+        }
     }
 }
 

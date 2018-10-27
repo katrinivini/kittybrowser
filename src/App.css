@@ -6,6 +6,10 @@ body, html {
   font-size: 16px;
 }
 
+h4 {
+  margin: 0;
+}
+
 .loading {
   text-align: center;
   width: 320px;

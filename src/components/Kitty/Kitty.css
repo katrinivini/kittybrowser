@@ -1,0 +1,12 @@
+.card .meta {
+    margin: 15px 0;
+}
+
+.card .meta div {
+    margin: 10px 0;
+}
+
+.card .avatar {
+    width: 300px;
+    height: auto;
+}

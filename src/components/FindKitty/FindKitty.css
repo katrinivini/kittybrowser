@@ -1,0 +1,28 @@
+.find-kitty div {
+    display: flex;
+    width: 35%;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 435px;
+}
+
+.find-kitty div * {
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+    border-radius: 5%;
+    height: 35px;
+    font-size: 16px;
+    font-weight: bold;
+    outline: none;
+}
+
+.find-kitty input {
+    width: 200px;
+}
+
+.find-kitty button {
+    width: 100px;
+    background-color: lightgrey;
+    color: white;
+}

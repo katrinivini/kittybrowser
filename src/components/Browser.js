@@ -2,16 +2,17 @@ import React, { Component } from 'react';
 import { object } from 'prop-types';
 import Web3 from 'web3';
 import KittyCoreABI from '../contracts/KittyCoreABI.json';
-import { CONTRACT_NAME, CONTRACT_ADDRESS } from '../config';
+import { CONTRACT_NAME, CONTRACT_ADDRESS, KITTY_API_URL } from '../config';
 import datapoint from '../datapoint';
 import FindKitty from './FindKitty';
-import KittyInfo from './KittyInfo';
+import Kitty from './Kitty';
 
 class Browser extends Component {
   constructor(props) {
     super(props)
-    this.state = { info: []}
-    this.fetch = this.fetch.bind(this)
+    this.state = {}
+    this.searchKitty = this.searchKitty.bind(this)
+    this.searchRandomKitty = this.searchRandomKitty.bind(this)
   }
 
   componentDidMount() {
@@ -32,22 +33,39 @@ class Browser extends Component {
     });
   }
 
-  // fetchRandom(){
-  //   const { contracts } = this.context.drizzle;
-  // }
-
-  fetch(id) {
-    //need logic for checking id format
+  async searchRandomKitty() {
     const { contracts } = this.context.drizzle;
-    contracts.CryptoKitties.methods.getKitty(id).call((err, result) => {
-      if (err) this.setState({ error: err.message })
-      else {
-        const newState = datapoint.getKittyInfo(result);
-        this.setState({
-          info: newState
-        })
-      }
-    })
+    const totalSupply = await contracts.CryptoKitties.methods.totalSupply().call()
+    const randomId = 1 + Math.floor(Math.random() * Number(totalSupply))
+    this.searchKitty(randomId)
+  }
+
+  async searchKitty(id) {
+    //checking id format
+    if (!this.isValidId(id)) {
+      this.setState({
+        error: 'Enter a number greater than 0'
+      })
+      return
+    }
+    try {
+      const { contracts } = this.context.drizzle;
+      const apiResponse = await fetch(`${KITTY_API_URL}${id}`)
+      const apiJSON = await apiResponse.json()
+      const contractResult = await contracts.CryptoKitties.methods.getKitty(id).call()
+      const newState = datapoint.getKittyInfo(id, apiJSON, contractResult);
+      this.setState({ error: null, data: newState })
+    } catch (e) {
+      //kitten not found
+      this.setState({
+        error: 'Kitten not found'
+      })
+    }
+  }
+
+  isValidId(id) {
+    const num = parseInt(id, 10)
+    return !isNaN(num) && num > 0
   }
 
   render() {
@@ -58,10 +76,10 @@ class Browser extends Component {
         </h1>
 
         {/* Input to type in the kitty ID here */}
-        <FindKitty fetch={this.fetch}/>
+        <FindKitty searchKitty={this.searchKitty} searchRandomKitty={this.searchRandomKitty} />
         
         {/* Display Kitty info here */}
-        <KittyInfo info={this.state.info} error={this.state.error}/>
+        <Kitty result={this.state}/>
       </div>
     );
   }
