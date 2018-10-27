@@ -7,8 +7,9 @@ class Kitty extends Component {
     }
 
     render() {
-        const {error, data} = this.props.result;
+        const {error, data, isLoading} = this.props.result;
         if (error) return <div className='error'>{error}</div>
+        if (isLoading) return <div className='loading-kitty'>Loading...</div>
         return (
             !this.isEmpty(data) && 
             <div className='card'>

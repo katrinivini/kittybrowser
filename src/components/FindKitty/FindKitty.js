@@ -19,11 +19,13 @@ class FindKitty extends Component {
     }
 
     handleSubmit() {
+        this.props.isLoading(true)
         this.props.searchKitty(this.state.input);
     }
 
     handleClick() {
         this.setState({ input: "" })
+        this.props.isLoading(true)
         this.props.searchRandomKitty()
     }
 

@@ -13,6 +13,7 @@ class Browser extends Component {
     this.state = {}
     this.searchKitty = this.searchKitty.bind(this)
     this.searchRandomKitty = this.searchRandomKitty.bind(this)
+    this.isLoading = this.isLoading.bind(this)
   }
 
   componentDidMount() {
@@ -31,6 +32,13 @@ class Browser extends Component {
       contractName: CONTRACT_NAME,
       web3Contract: kittyContract,
     });
+  }
+
+  isLoading(status) {
+    this.setState({
+      error: null,
+      isLoading: status
+    })
   }
 
   async searchRandomKitty() {
@@ -54,10 +62,15 @@ class Browser extends Component {
       const apiJSON = await apiResponse.json()
       const contractResult = await contracts.CryptoKitties.methods.getKitty(id).call()
       const newState = datapoint.getKittyInfo(id, apiJSON, contractResult);
-      this.setState({ error: null, data: newState })
+      this.setState({ 
+        isLoading: false,
+        error: null, 
+        data: newState
+      })
     } catch (e) {
       //kitten not found
       this.setState({
+        isLoading: false,
         error: 'Kitten not found'
       })
     }
@@ -76,10 +89,14 @@ class Browser extends Component {
         </h1>
 
         {/* Input to type in the kitty ID here */}
-        <FindKitty searchKitty={this.searchKitty} searchRandomKitty={this.searchRandomKitty} />
+        <FindKitty 
+          searchKitty={this.searchKitty}
+          searchRandomKitty={this.searchRandomKitty}
+          isLoading={this.isLoading}
+          />
         
         {/* Display Kitty info here */}
-        <Kitty result={this.state}/>
+        <Kitty result={this.state} />
       </div>
     );
   }
